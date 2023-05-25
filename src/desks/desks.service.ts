@@ -1,0 +1,27 @@
+import { Desk, DeskDocument } from 'src/shared/schemas/desk.schema';
+import { InjectModel } from "@nestjs/mongoose";
+import { Injectable } from '@nestjs/common';
+import { Model } from 'mongoose';
+
+@Injectable()
+export class DesksService {
+
+    constructor(@InjectModel(Desk.name) private deskModel: Model<DeskDocument>) { }
+
+    public findAll(): Promise<Desk[]> {
+        return this.deskModel.find();
+    }
+
+    public findOne(id: string): Promise<Desk> {
+        return this.deskModel.findById(id);
+    }
+
+    public async create(desk: Desk): Promise<Desk> {
+        try {
+            const newDesk = new this.deskModel(desk);
+            return await newDesk.save();
+        } catch (e) {
+            console.log(e);
+        }
+    }
+}
