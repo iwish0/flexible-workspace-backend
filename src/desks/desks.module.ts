@@ -1,8 +1,8 @@
-import { MongooseModule } from '@nestjs/mongoose';
+import { Desk, DeskSchema } from 'src/shared/schemas/desk.schema';
 import { DesksController } from './desks.controller';
+import { MongooseModule } from '@nestjs/mongoose';
 import { DesksService } from './desks.service';
 import { Module } from '@nestjs/common';
-import { Desk, DeskSchema } from 'src/shared/schemas/desk.schema';
 
 @Module({
   controllers: [DesksController],

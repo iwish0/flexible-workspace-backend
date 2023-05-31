@@ -9,19 +9,15 @@ export class DesksService {
     constructor(@InjectModel(Desk.name) private deskModel: Model<DeskDocument>) { }
 
     public findAll(): Promise<Desk[]> {
-        return this.deskModel.find();
+        return this.deskModel.find().catch((error) => error);
     }
 
     public findOne(id: string): Promise<Desk> {
-        return this.deskModel.findById(id);
+        return this.deskModel.findById(id).catch((error) => error);
     }
 
     public async create(desk: Desk): Promise<Desk> {
-        try {
-            const newDesk = new this.deskModel(desk);
-            return await newDesk.save();
-        } catch (e) {
-            console.log(e);
-        }
+        const newDesk = new this.deskModel(desk);
+        return await newDesk.save().catch((error) => error);
     }
 }

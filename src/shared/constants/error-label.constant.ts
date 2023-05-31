@@ -1,0 +1,1 @@
+export const PARAMETRE_INVALIDE: string = 'Paramétre invalide';

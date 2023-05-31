@@ -1,7 +1,7 @@
 import { DeskBookingState } from 'src/shared/models/desk-booking-state.model';
-import { Controller, Get, Post, Body } from '@nestjs/common';
 import { DeskBooking } from 'src/shared/schemas/desk-booking.schema';
 import { DeskBookingsService } from './desk-bookings.service';
+import { Controller, Get, Post, Body } from '@nestjs/common';
 
 export type Criteria = {
     checkInDateTime: string;
@@ -15,16 +15,16 @@ export class DeskBookingsController {
 
     @Get()
     public findAll(): Promise<DeskBooking[]> {
-        return this.deskBookingsService.findAll();
+        return this.deskBookingsService.findAll().catch((error) => error);
     }
 
     @Post('state')
-    public async findDesksBookingState(@Body() criteria: Criteria): Promise<DeskBookingState[]> {
-        return this.deskBookingsService.findDesksBookingState(criteria);
+    public findDesksBookingState(@Body() criteria: Criteria): Promise<DeskBookingState[]> {
+        return this.deskBookingsService.findDesksBookingState(criteria).catch((error) => error);
     }
 
     @Post()
     public create(@Body() booking: DeskBooking): Promise<DeskBooking> {
-        return this.deskBookingsService.create(booking);
+        return this.deskBookingsService.create(booking).catch((error) => error);
     }
 }

@@ -9,11 +9,11 @@ export class DesksController {
 
     @Get()
     public findAll(): Promise<Desk[]> {
-        return this.desksService.findAll();
+        return this.desksService.findAll().catch((error) => error);
     }
 
     @Post()
     public create(@Body() desk: Desk): Promise<Desk> {
-        return this.desksService.create(desk);
+        return this.desksService.create(desk).catch((error) => error);
     }
 } 
