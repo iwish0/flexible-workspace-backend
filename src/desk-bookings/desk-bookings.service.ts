@@ -7,6 +7,7 @@ import { InjectModel } from "@nestjs/mongoose";
 import { BadRequestException, Injectable } from '@nestjs/common';
 import mongoose, { Model } from 'mongoose';
 import { PARAMETRE_INVALIDE } from 'src/shared/constants/error-label.constant';
+import { DateUtils } from 'src/shared/utils/date.utils';
 
 @Injectable()
 export class DeskBookingsService {
@@ -21,11 +22,14 @@ export class DeskBookingsService {
     }
 
     public findByCriteria(criteria: Criteria): Promise<DeskBooking[]> {
+        const { checkInDateTime, checkOutDateTime } = criteria;
+        console.log(DateUtils.getDateWithoutSecondAndMiilisecond(checkInDateTime))
+        console.log(DateUtils.getDateWithoutSecondAndMiilisecond(checkOutDateTime))
         return this.bookingModel.find({
             $and: [
                 {
-                    checkInDateTime: { $gte: new Date(criteria.checkInDateTime) },
-                    checkOutDateTime: { $lte: new Date(criteria.checkOutDateTime) }
+                    checkInDateTime: { $gte: DateUtils.getDateWithoutSecondAndMiilisecond(checkInDateTime) },
+                    checkOutDateTime: { $lte: DateUtils.getDateWithoutSecondAndMiilisecond(checkOutDateTime) }
                 }
             ]
         }).catch((error) => error)
