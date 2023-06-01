@@ -10,7 +10,7 @@ export type SvgRectAttribut = {
 
 export type OfficeLayoutSVGData = {
     svgDrawAttribut: SvgRectAttribut;
-    svgBuisnessValue: DeskBookingState | undefined;
+    deskBookingState: DeskBookingState;
 }
 
 export type DeskName =

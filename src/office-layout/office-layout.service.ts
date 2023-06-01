@@ -14,7 +14,7 @@ export class OfficeLayoutService {
         const listOfficeLayoutSVGData: OfficeLayoutSVGData[] = this.getRawOfficeLayout().map((svgRectAttribut: SvgRectAttribut) => {
             const deskBookingState: DeskBookingState = listDeskBookingState.find(({ deskInfo }) => deskInfo.name === svgRectAttribut.id);
             return {
-                svgBuisnessValue: deskBookingState,
+                deskBookingState,
                 svgDrawAttribut: svgRectAttribut
             };
         })

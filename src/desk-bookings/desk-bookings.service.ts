@@ -1,6 +1,5 @@
-import { DeskBookingState } from 'src/shared/models/desk-booking-state.model';
+import { DeskBookingState, SearchCriteria } from 'src/shared/models/desk-booking-state.model';
 import { DeskBooking, DeskBookingDocument } from 'src/shared/schemas/desk-booking.schema';
-import { Criteria } from './desk-bookings.controller';
 import { Desk } from 'src/shared/schemas/desk.schema';
 import { DesksService } from 'src/desks/desks.service';
 import { InjectModel } from "@nestjs/mongoose";
@@ -24,8 +23,8 @@ export class DeskBookingsService {
         return this.bookingModel.find().catch((error) => error);
     }
 
-    public findByCriteria(criteria: Criteria): Promise<DeskBooking[]> {
-        const { checkInDateTime, checkOutDateTime } = criteria;
+    public findByCriteria(searchCriteria: SearchCriteria): Promise<DeskBooking[]> {
+        const { checkInDateTime, checkOutDateTime } = searchCriteria;
         console.log(DateUtils.getDateWithoutSecondAndMiilisecond(checkInDateTime))
         console.log(DateUtils.getDateWithoutSecondAndMiilisecond(checkOutDateTime))
         return this.bookingModel.find({
@@ -44,32 +43,21 @@ export class DeskBookingsService {
     }
 
     public create(booking: DeskBooking): Promise<DeskBooking> {
-        const mockBooking: DeskBooking = {
-            user: {
-                email: 'test@gmail.com',
-                id: 1,
-                name: 'John'
-            },
-            "checkInDateTime": new Date(2023, 4, 30, 8),
-            "checkOutDateTime": new Date(2023, 4, 30, 18, 30),
-            comment: 'no comment',
-            deskId: '64706d7553aa76f4e68f47a8',
-            dateCreated:null
-        }
-        const newBooking = new this.bookingModel(mockBooking);
+        const newBooking = new this.bookingModel(booking);
         return newBooking.save().catch((error) => error);
     }
 
-    public async findDesksBookingState(criteria: Criteria): Promise<DeskBookingState[]> {
+    public async findDesksBookingState(searchCriteria: SearchCriteria): Promise<DeskBookingState[]> {
         try {
-            if (!criteria.checkInDateTime || !criteria.checkOutDateTime) {
+            if (!searchCriteria.checkInDateTime || !searchCriteria.checkOutDateTime) {
                 throw new BadRequestException(PARAMETRE_INVALIDE);
             }
             const desks: Desk[] = await this.desksService.findAll();
-            const bookings: DeskBooking[] = await this.findByCriteria(criteria);
+            const bookings: DeskBooking[] = await this.findByCriteria(searchCriteria);
             const ids: string[] = bookings.map((booking: DeskBooking) => new mongoose.Types.ObjectId(booking.deskId).toString());
             const deskBookingState: DeskBookingState[] = desks.map((desk: Desk) => {
                 return {
+                    searchCriteria,
                     deskInfo: desk,
                     isBooked: ids.includes(new mongoose.Types.ObjectId(desk._id).toString()),
                     bookingInfo: bookings.find((booking: DeskBooking) => new mongoose.Types.ObjectId(desk._id).toString() === booking.deskId) || null
@@ -81,9 +69,9 @@ export class DeskBookingsService {
         }
     }
 
-    public async getOfficeLayoutWithDeskBookingsState(criteria: Criteria): Promise<OfficeLayoutSVGData[]> {
+    public async getOfficeLayoutWithDeskBookingsState(searchCriteria: SearchCriteria): Promise<OfficeLayoutSVGData[]> {
         try {
-            const listDeskBookingState: DeskBookingState[] = await this.findDesksBookingState(criteria);
+            const listDeskBookingState: DeskBookingState[] = await this.findDesksBookingState(searchCriteria);
             return await Promise.resolve(this.officeLayoutService.getOfficeLayoutWithDeskBookingsState(listDeskBookingState));
         } catch (e) {
             return e;
