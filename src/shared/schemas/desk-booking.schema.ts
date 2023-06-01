@@ -1,14 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Desk } from './desk.schema';
 import mongoose from 'mongoose';
+import { User } from '../models/user.model';
 
 export type DeskBookingDocument = DeskBooking & Document;
 
 @Schema()
 export class DeskBooking {
 
-    @Prop({ required: true })
-    public userName: string;
+    @Prop({ required: true, type: User })
+    public user: User;
 
     @Prop({
         type: mongoose.Types.ObjectId,
@@ -18,7 +19,7 @@ export class DeskBooking {
     public deskId: string;
 
     @Prop({
-        required: true,
+        required: false,
         default: new Date()
     })
     public dateCreated: Date;

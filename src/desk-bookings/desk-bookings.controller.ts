@@ -1,4 +1,5 @@
 import { DeskBookingState } from 'src/shared/models/desk-booking-state.model';
+import { OfficeLayoutSVGData } from 'src/shared/models/office-layout.models';
 import { DeskBooking } from 'src/shared/schemas/desk-booking.schema';
 import { DeskBookingsService } from './desk-bookings.service';
 import { Controller, Get, Post, Body } from '@nestjs/common';
@@ -21,6 +22,11 @@ export class DeskBookingsController {
     @Post('state')
     public findDesksBookingState(@Body() criteria: Criteria): Promise<DeskBookingState[]> {
         return this.deskBookingsService.findDesksBookingState(criteria).catch((error) => error);
+    }
+
+    @Post('state/office-layout')
+    public getOfficeLayoutWithDeskBookingsState(@Body() criteria: Criteria): Promise<OfficeLayoutSVGData[]> {
+        return this.deskBookingsService.getOfficeLayoutWithDeskBookingsState(criteria).catch((error) => error);
     }
 
     @Post()
