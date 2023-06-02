@@ -25,8 +25,6 @@ export class DeskBookingsService {
 
     public findByCriteria(searchCriteria: SearchCriteria): Promise<DeskBooking[]> {
         const { checkInDateTime, checkOutDateTime } = searchCriteria;
-        console.log(DateUtils.getDateWithoutSecondAndMiilisecond(checkInDateTime))
-        console.log(DateUtils.getDateWithoutSecondAndMiilisecond(checkOutDateTime))
         return this.bookingModel.find({
             $and: [
                 {
@@ -43,7 +41,11 @@ export class DeskBookingsService {
     }
 
     public create(booking: DeskBooking): Promise<DeskBooking> {
-        const newBooking = new this.bookingModel(booking);
+        const { checkInDateTime, checkOutDateTime } = booking;
+        const checkInDateTimeFormated = DateUtils.getDateWithoutSecondAndMiilisecond(checkInDateTime);
+        const checkOutDateTimeFormated = DateUtils.getDateWithoutSecondAndMiilisecond(checkOutDateTime);
+        const deskBooking: DeskBooking = { ...booking, checkInDateTime: checkInDateTimeFormated, checkOutDateTime: checkOutDateTimeFormated };
+        const newBooking = new this.bookingModel(deskBooking);
         return newBooking.save().catch((error) => error);
     }
 
