@@ -1,4 +1,4 @@
-import { DeskBookingState } from "./desk-booking-state.model";
+import { DeskBookingState } from './desk-booking.model';
 
 export type SvgRectAttribut = {
     id: DeskName;

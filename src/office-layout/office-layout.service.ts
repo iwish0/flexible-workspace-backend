@@ -1,5 +1,5 @@
 import { OfficeLayoutSVGData, SvgRectAttribut } from 'src/shared/models/office-layout.models';
-import { DeskBookingState } from 'src/shared/models/desk-booking-state.model';
+import { DeskBookingState } from 'src/shared/models/desk-booking.model';
 import { SVG_ATTRIBUTS } from '../shared/constants/office-layout.constant';
 import { Injectable } from '@nestjs/common';
 

@@ -1,8 +1,8 @@
-import { DeskBookingState, SearchCriteria } from 'src/shared/models/desk-booking-state.model';
+import { DeskBookingState, SearchCriteria } from 'src/shared/models/desk-booking.model';
 import { OfficeLayoutSVGData } from 'src/shared/models/office-layout.models';
 import { DeskBooking } from 'src/shared/schemas/desk-booking.schema';
 import { DeskBookingsService } from './desk-bookings.service';
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 
 @Controller('desk-bookings')
 export class DeskBookingsController {
@@ -12,6 +12,11 @@ export class DeskBookingsController {
     @Get()
     public findAll(): Promise<DeskBooking[]> {
         return this.deskBookingsService.findAll().catch((error) => error);
+    }
+
+    @Get(':userId')
+    public findAllByUser(@Param('userId') userId: string): Promise<DeskBooking[]> {
+        return this.deskBookingsService.findByUser(+userId).catch((error) => error);
     }
 
     @Post('state')
