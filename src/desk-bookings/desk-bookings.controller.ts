@@ -1,8 +1,8 @@
-import { DeskBookingState, SearchCriteria } from 'src/shared/models/desk-booking.model';
+import { DeskBookingInfo, DeskBookingState, SearchCriteria } from 'src/shared/models/desk-booking.model';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { OfficeLayoutSVGData } from 'src/shared/models/office-layout.models';
 import { DeskBooking } from 'src/shared/schemas/desk-booking.schema';
 import { DeskBookingsService } from './desk-bookings.service';
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 
 @Controller('desk-bookings')
 export class DeskBookingsController {
@@ -15,8 +15,8 @@ export class DeskBookingsController {
     }
 
     @Get(':userId')
-    public findAllByUser(@Param('userId') userId: string): Promise<DeskBooking[]> {
-        return this.deskBookingsService.findByUser(+userId).catch((error) => error);
+    public findAllByUser(@Param('userId') userId: string): Promise<DeskBookingInfo[]> {
+        return this.deskBookingsService.findDeskBookingHistoryByUser(+userId).catch((error) => error);
     }
 
     @Post('state')
@@ -32,5 +32,10 @@ export class DeskBookingsController {
     @Post()
     public create(@Body() booking: DeskBooking): Promise<DeskBooking> {
         return this.deskBookingsService.create(booking).catch((error) => error);
+    }
+
+    @Delete(':bookingId')
+    public deleteOne(@Param('bookingId') bookingId: string): Promise<void> {
+        return this.deskBookingsService.deleteOne(bookingId).catch((error) => error);
     }
 }

@@ -1,14 +1,14 @@
-import { DeskBookingState, SearchCriteria } from 'src/shared/models/desk-booking.model';
+import { DeskBookingInfo, DeskBookingState, SearchCriteria } from 'src/shared/models/desk-booking.model';
 import { DeskBooking, DeskBookingDocument } from 'src/shared/schemas/desk-booking.schema';
-import { Desk } from 'src/shared/schemas/desk.schema';
-import { DesksService } from 'src/desks/desks.service';
-import { InjectModel } from "@nestjs/mongoose";
-import { BadRequestException, Injectable } from '@nestjs/common';
-import mongoose, { Model } from 'mongoose';
 import { PARAMETRE_INVALIDE } from 'src/shared/constants/error-label.constant';
-import { DateUtils } from 'src/shared/utils/date.utils';
 import { OfficeLayoutService } from 'src/office-layout/office-layout.service';
 import { OfficeLayoutSVGData } from 'src/shared/models/office-layout.models';
+import { DesksService } from 'src/desks/desks.service';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import { DateUtils } from 'src/shared/utils/date.utils';
+import { Desk } from 'src/shared/schemas/desk.schema';
+import { InjectModel } from "@nestjs/mongoose";
+import mongoose, { Model } from 'mongoose';
 
 @Injectable()
 export class DeskBookingsService {
@@ -23,18 +23,27 @@ export class DeskBookingsService {
         return this.bookingModel.find().catch((error) => error);
     }
 
+    public async deleteOne(bookingId: string): Promise<any> {
+        return this.bookingModel.deleteOne({ '_id': bookingId });
+    }
 
-    public findByUser(userId: number): Promise<DeskBooking[]> {
+
+    public async findDeskBookingHistoryByUser(userId: number): Promise<DeskBookingInfo[]> {
         const startDate: Date = DateUtils.getStartOfDay(DateUtils.getPastDate(new Date(), 6, 'months'));
         const endDate: Date = DateUtils.getEndOfDay(DateUtils.getFuturDate(new Date(), 6, 'months').toISOString());
         const dateTimeInterval: { checkInDateTime: { $gte: Date }, checkOutDateTime: { $lte: Date } } = {
             checkInDateTime: { $gte: startDate },
             checkOutDateTime: { $lte: endDate }
         }
-        return this.bookingModel.find({
-            'user.id': userId,
-            $and: [dateTimeInterval]
-        }).catch((error) => error)
+        const desks: Desk[] = await this.desksService.findAll();
+        const bookings: DeskBooking[] = await this.bookingModel.find({ 'user.id': userId, $and: [dateTimeInterval] });
+        return bookings.map((booking: DeskBooking) => {
+            const deskBookingInfo: DeskBookingInfo = {
+                bookingInfo: booking,
+                deskInfo: desks.find((desk: Desk) => new mongoose.Types.ObjectId(desk._id).toString() === booking.deskId)
+            };
+            return deskBookingInfo;
+        });
     }
 
     public findDeskBookingsByCriteria(searchCriteria: SearchCriteria): Promise<DeskBooking[]> {
