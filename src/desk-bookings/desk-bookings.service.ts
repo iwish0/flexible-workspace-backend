@@ -29,7 +29,7 @@ export class DeskBookingsService {
 
 
     public async findDeskBookingHistoryByUser(userId: number): Promise<DeskBookingInfo[]> {
-        const startDate: Date = DateUtils.getStartOfDay(DateUtils.getPastDate(new Date(), 6, 'months'));
+        const startDate: Date = DateUtils.getStartOfDay(DateUtils.getPastDate(new Date(), 3, 'months'));
         const endDate: Date = DateUtils.getEndOfDay(DateUtils.getFuturDate(new Date(), 6, 'months').toISOString());
         const dateTimeInterval: { checkInDateTime: { $gte: Date }, checkOutDateTime: { $lte: Date } } = {
             checkInDateTime: { $gte: startDate },
@@ -51,8 +51,8 @@ export class DeskBookingsService {
         return this.bookingModel.find({
             $and: [
                 {
-                    checkInDateTime: { $gte: DateUtils.getDateWithoutSecondAndMiilisecond(checkInDateTime) },
-                    checkOutDateTime: { $lte: DateUtils.getDateWithoutSecondAndMiilisecond(checkOutDateTime) }
+                    checkInDateTime: { $gte: DateUtils.getStartOfDay(checkInDateTime) },
+                    checkOutDateTime: { $lte: DateUtils.getEndOfDay(checkOutDateTime) }
                 }
             ]
         }).catch((error) => error)
