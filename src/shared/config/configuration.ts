@@ -7,8 +7,10 @@ export default (): EnvVariableConfig => ({
         dbName: process.env.DATABASE_NAME
     },
     smtp: {
+        port: process.env.EMAIL_PORT,
         host: process.env.EMAIL_HOST,
         user: process.env.EMAIL_AUTH_USER,
-        pass: process.env.EMAIL_AUTH_PWD
+        pass: process.env.EMAIL_AUTH_PWD,
+        emailSenderAdress: process.env.EMAIL_SENDER_ADRESS
     }
 });

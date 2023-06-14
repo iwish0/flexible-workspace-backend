@@ -1,3 +1,4 @@
+import { DD_MM_YYYY } from '../constants/date.constant';
 import * as moment from 'moment';
 
 export class DateUtils {
@@ -37,7 +38,10 @@ export class DateUtils {
         return new Date()
     }
 
-    public static dateToString(date: Date, format: string): string {
+    public static dateToString(
+        date: Date,
+        format: string = DD_MM_YYYY
+    ): string {
         const dateValid: Date = DateUtils.isDateValid(date) ? date : new Date();
         return moment.utc(dateValid).format(format);
     }

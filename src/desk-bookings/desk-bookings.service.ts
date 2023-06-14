@@ -1,11 +1,12 @@
+import { BookingConfirmationEmailService } from '../shared/services/email/booking-confirmation-email.service';
 import { DeskBookingInfo, DeskBookingState, SearchCriteria } from 'src/shared/models/desk-booking.model';
 import { DeskBooking, DeskBookingDocument } from 'src/shared/schemas/desk-booking.schema';
 import { PARAMETRE_INVALIDE } from 'src/shared/constants/error-label.constant';
 import { OfficeLayoutService } from 'src/office-layout/office-layout.service';
 import { OfficeLayoutSVGData } from 'src/shared/models/office-layout.models';
-import { DesksService } from 'src/desks/desks.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { DateUtils } from 'src/shared/utils/date.utils';
+import { DesksService } from 'src/desks/desks.service';
 import { Desk } from 'src/shared/schemas/desk.schema';
 import { InjectModel } from "@nestjs/mongoose";
 import mongoose, { Model } from 'mongoose';
@@ -16,7 +17,8 @@ export class DeskBookingsService {
     constructor(
         private readonly desksService: DesksService,
         private readonly officeLayoutService: OfficeLayoutService,
-        @InjectModel(DeskBooking.name) private bookingModel: Model<DeskBookingDocument>
+        private readonly bookingConfirmationEmailService: BookingConfirmationEmailService,
+        @InjectModel(DeskBooking.name) private readonly bookingModel: Model<DeskBookingDocument>
     ) { }
 
     public findAll(): Promise<DeskBooking[]> {
@@ -63,13 +65,15 @@ export class DeskBookingsService {
 
     }
 
-    public create(booking: DeskBooking): Promise<DeskBooking> {
+    public async create(booking: DeskBooking): Promise<DeskBooking> {
         const { checkInDateTime, checkOutDateTime } = booking;
         const checkInDateTimeFormated = DateUtils.getDateWithoutSecondAndMiilisecond(checkInDateTime);
         const checkOutDateTimeFormated = DateUtils.getDateWithoutSecondAndMiilisecond(checkOutDateTime);
-        const deskBooking: DeskBooking = { ...booking, checkInDateTime: checkInDateTimeFormated, checkOutDateTime: checkOutDateTimeFormated };
-        const newBooking = new this.bookingModel(deskBooking);
-        return newBooking.save().catch((error) => error);
+        const deskBookingToSave: DeskBooking = { ...booking, checkInDateTime: checkInDateTimeFormated, checkOutDateTime: checkOutDateTimeFormated };
+        const savedBooking: DeskBooking = await new this.bookingModel(deskBookingToSave).save();
+        const desk: Desk = await this.desksService.findOne(savedBooking.deskId);
+        await this.bookingConfirmationEmailService.sendDeskBookingConfirmationEmail(savedBooking, desk);
+        return savedBooking;
     }
 
     public async findDesksBookingState(searchCriteria: SearchCriteria): Promise<DeskBookingState[]> {
@@ -101,6 +105,5 @@ export class DeskBookingsService {
         } catch (e) {
             return e;
         }
-
     }
 } 

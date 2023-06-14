@@ -10,6 +10,8 @@ export type DataBaseEnvVariable = {
 }
 
 export type SmtpEnvVariable = {
+    emailSenderAdress: string;
+    port: string;
     host: string;
     user: string;
     pass: string;
