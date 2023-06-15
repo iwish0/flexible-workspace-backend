@@ -1,5 +1,5 @@
 import { DeskBookingInfo, DeskBookingState, SearchCriteria } from 'src/shared/models/desk-booking.model';
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
 import { OfficeLayoutSVGData } from 'src/shared/models/office-layout.models';
 import { DeskBooking } from 'src/shared/schemas/desk-booking.schema';
 import { DeskBookingsService } from './desk-bookings.service';
@@ -30,8 +30,13 @@ export class DeskBookingsController {
     }
 
     @Post()
-    public create(@Body() booking: DeskBooking): Promise<DeskBooking> {
-        return this.deskBookingsService.create(booking).catch((error) => error);
+    public async create(@Body() booking: DeskBooking): Promise<DeskBooking> {
+        try {
+            const savedDeskBooking: DeskBooking = await this.deskBookingsService.create(booking);
+            return savedDeskBooking
+        } catch (e: any) {
+            throw new HttpException(e.message, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @Delete(':bookingId')
