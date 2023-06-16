@@ -46,13 +46,15 @@
 
 <body>
     <div id="titleBloc">
-        <h1>Confirmation de votre réservation</h1>
+        <h1>{{title}}</h1>
     </div>
     <div id="mainContent">
-        <div class="flex"><span>Emplacement</span><span>{{deskName}}</span></div>
+        <div class="flex"><span>Emplacement</span><span>{{bookingObjectName}}</span></div>
         {{#if location}} <div><span>Localisation</span><span>{{location}}</span></div>{{/if}}
         <div class="flex"><span>Date de début</span><span>{{checkInDate}}</span></div>
-        <div class="flex"><span>Date defin</span><span>{{checkOutDate}}</span></div>
+        {{#if checkInTime}}<div class="flex"><span>Heure de début</span><span>{{checkInTime}}</span></div>{{/if}}
+        <div class="flex"><span>Date de fin</span><span>{{checkOutDate}}</span></div>
+        {{#if checkOutTime}} <div class="flex"><span>Heure de fin</span><span>{{checkOutTime}}</span></div>{{/if}}
     </div>
 </body>
 

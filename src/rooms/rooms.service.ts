@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { InjectModel } from "@nestjs/mongoose";
-import { Model } from 'mongoose';
 import { Room, RoomDocument } from 'src/shared/schemas/room.schema';
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectModel } from "@nestjs/mongoose";
+import mongoose, { Model } from 'mongoose';
 
 @Injectable()
 export class RoomsService {
@@ -12,16 +12,14 @@ export class RoomsService {
     return this.roomModel.find();
   }
 
-  public findOne(id: string): Promise<Room> {
-    return this.roomModel.findById(id);
+  public async findOne(id: string): Promise<Room> {
+    const _id: mongoose.Types.ObjectId = new mongoose.Types.ObjectId(id)
+    const room: Room = await this.roomModel.findById(_id);
+    if (!room) throw new NotFoundException();
+    return room;
   }
 
-  public async create(room: Room): Promise<Room> {
-    try {
-      const newRoom = new this.roomModel(room);
-      return await newRoom.save();
-    } catch (e) {
-      console.log(e);
-    }
+  public create(room: Room): Promise<Room> {
+    return new this.roomModel(room).save();
   }
 }

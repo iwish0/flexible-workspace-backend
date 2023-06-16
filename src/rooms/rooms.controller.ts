@@ -13,16 +13,8 @@ export class RoomsController {
   }
 
   @Get(':id')
-  public async findOne(@Param('id') id: string): Promise<Room> {
-    try {
-      const room: Room = await this.roomsService.findOne(id);
-      if (!room) {
-        throw new NotFoundException();
-      }
-      return room
-    } catch (e: any) {
-      return e;
-    }
+  public findOne(@Param('id') id: string): Promise<Room> {
+    return this.roomsService.findOne(id);
   }
 
   @Post()

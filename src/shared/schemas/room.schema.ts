@@ -1,10 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import mongoose from 'mongoose';
 
 export type RoomDocument = Room & Document;
 
-// TODO Mettre sous forme de constante les messages d'erreurs
 @Schema()
 export class Room {
+
+  public _id: mongoose.Types.ObjectId;
 
   @Prop({
     required: true,
@@ -12,7 +14,7 @@ export class Room {
   })
   public name: string;
 
-  @Prop({ required: true })
+  @Prop()
   public location: string;
 
   @Prop({ default: 'Pas de description de disponible' })
