@@ -1,10 +1,10 @@
 import { BookingConfirmationEmailService } from '../shared/services/email/booking-confirmation-email.service';
 import { DeskBooking, DeskBookingDocument } from 'src/shared/schemas/desk-booking.schema';
 import { DeskBookingInfo, DeskBookingState } from 'src/shared/models/desk-booking.model';
+import { DeskOfficeLayoutSVGData } from 'src/shared/models/desk-office-layout.model';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PARAMETRE_INVALIDE } from 'src/shared/constants/error-label.constant';
 import { OfficeLayoutService } from 'src/office-layout/office-layout.service';
-import { OfficeLayoutSVGData } from 'src/shared/models/office-layout.models';
 import { SearchCriteria } from 'src/shared/models/booking-state.model';
 import { DateUtils } from 'src/shared/utils/date.utils';
 import { DesksService } from 'src/desks/desks.service';
@@ -96,7 +96,7 @@ export class DeskBookingsService {
         return deskBookingState;
     }
 
-    public async getOfficeLayoutWithDeskBookingsState(searchCriteria: SearchCriteria): Promise<OfficeLayoutSVGData[]> {
+    public async getOfficeLayoutWithDeskBookingsState(searchCriteria: SearchCriteria): Promise<DeskOfficeLayoutSVGData[]> {
         const listDeskBookingState: DeskBookingState[] = await this.findDesksBookingState(searchCriteria);
         return Promise.resolve(this.officeLayoutService.getOfficeLayoutWithDeskBookingsState(listDeskBookingState));
     }

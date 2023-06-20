@@ -1,4 +1,5 @@
 import { RoomBooking, RoomBookingSchema } from 'src/shared/schemas/room-booking.schema';
+import { OfficeLayoutService } from '../office-layout/office-layout.service';
 import { RoomBookingsController } from './room-bookings.controller';
 import { Room, RoomSchema } from 'src/shared/schemas/room.schema';
 import { RoomBookingsService } from './room-bookings.service';
@@ -15,6 +16,10 @@ import { Module } from '@nestjs/common';
       { name: RoomBooking.name, schema: RoomBookingSchema },
       { name: Room.name, schema: RoomSchema }
     ])],
-  providers: [RoomBookingsService, RoomsService]
+  providers: [
+    RoomsService,
+    RoomBookingsService,
+    OfficeLayoutService
+  ]
 })
 export class RoomBookingsModule { }

@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
 import { DeskBookingInfo, DeskBookingState } from 'src/shared/models/desk-booking.model';
-import { OfficeLayoutSVGData } from 'src/shared/models/office-layout.models';
+import { DeskOfficeLayoutSVGData } from 'src/shared/models/desk-office-layout.model';
 import { SearchCriteria } from 'src/shared/models/booking-state.model';
 import { DeskBooking } from 'src/shared/schemas/desk-booking.schema';
 import { DeskBookingsService } from './desk-bookings.service';
@@ -26,7 +26,7 @@ export class DeskBookingsController {
     }
 
     @Post('state/office-layout')
-    public getOfficeLayoutWithDeskBookingsState(@Body() searchCriteria: SearchCriteria): Promise<OfficeLayoutSVGData[]> {
+    public getOfficeLayoutWithDeskBookingsState(@Body() searchCriteria: SearchCriteria): Promise<DeskOfficeLayoutSVGData[]> {
         return this.deskBookingsService.getOfficeLayoutWithDeskBookingsState(searchCriteria);
     }
 

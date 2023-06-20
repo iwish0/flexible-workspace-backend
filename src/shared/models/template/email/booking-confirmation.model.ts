@@ -1,5 +1,3 @@
-type BookingType = 'desk' | 'room';
-
 export type BookingConfirmationEmailTemplateData = {
     title: string;
     bookingObjectName: string;
@@ -8,5 +6,4 @@ export type BookingConfirmationEmailTemplateData = {
     checkOutDate: string;
     checkInTime?: string;
     checkOutTime?: string;
-    bookingType: BookingType;
 }

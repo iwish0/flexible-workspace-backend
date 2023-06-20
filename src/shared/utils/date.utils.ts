@@ -69,4 +69,11 @@ export class DateUtils {
         const dateValid = DateUtils.isDateValid(date) ? date : new Date();
         return moment.utc(dateValid).endOf('days').toDate();
     }
+
+    public static getHourAndMinutFromDate(date: Date): string {
+        if (!DateUtils.isDateValid(date)) {
+            return '';
+        }
+        return `${date.getHours()}:${date.getMinutes()}`;
+    }
 }

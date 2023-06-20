@@ -34,8 +34,7 @@ export class BookingConfirmationEmailService {
             title: deskBookingConfirmationEmailTitle,
             checkInDate: DateUtils.dateToString(checkInDateTime),
             checkOutDate: DateUtils.dateToString(checkOutDateTime),
-            bookingObjectName: desk.name,
-            bookingType: 'desk'
+            bookingObjectName: desk.name
         };
         return this.sendBookingConfirmationEmail(user, templateData);
     }
@@ -49,10 +48,9 @@ export class BookingConfirmationEmailService {
             title: roomkBookingConfirmationEmailTitle,
             checkInDate: DateUtils.dateToString(checkInDateTime),
             checkOutDate: DateUtils.dateToString(checkOutDateTime),
-            checkInTime: '',
-            checkOutTime: '',
-            bookingObjectName: room.name,
-            bookingType: 'room'
+            checkInTime: DateUtils.getHourAndMinutFromDate(checkInDateTime),
+            checkOutTime: DateUtils.getHourAndMinutFromDate(checkOutDateTime),
+            bookingObjectName: room.name
         };
         return this.sendBookingConfirmationEmail(user, templateData);
     }
