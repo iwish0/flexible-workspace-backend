@@ -1,10 +1,10 @@
 import { BookingConfirmationEmailService } from '../shared/services/email/booking-confirmation-email.service';
 import { RoomBooking, RoomBookingDocument } from 'src/shared/schemas/room-booking.schema';
+import { RoomBookingInfo, RoomBookingState } from 'src/shared/models/room-booking.model';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { RoomOfficeLayoutSVGData } from 'src/shared/models/room-office-layout.model';
 import { PARAMETRE_INVALIDE } from 'src/shared/constants/error-label.constant';
 import { OfficeLayoutService } from 'src/office-layout/office-layout.service';
-import { RoomBookingState } from 'src/shared/models/room-booking.model';
 import { SearchCriteria } from 'src/shared/models/booking-state.model';
 import { DateUtils } from 'src/shared/utils/date.utils';
 import { Room } from 'src/shared/schemas/room.schema';
@@ -27,7 +27,7 @@ export class RoomBookingsService {
     }
 
     public async findOne(id: string): Promise<RoomBooking> {
-        const roomBooking: RoomBooking = await this.roomBookingModel.findById(id).catch((error) => error);
+        const roomBooking: RoomBooking = await this.roomBookingModel.findById(id);
         if (roomBooking) throw new NotFoundException();
         return roomBooking;
     }
@@ -39,7 +39,7 @@ export class RoomBookingsService {
         const bookingToSave: RoomBooking = { ...roomBooking, checkInDateTime: checkInDateTimeFormated, checkOutDateTime: checkOutDateTimeFormated };
         const savedBooking: RoomBooking = await new this.roomBookingModel(bookingToSave).save();
         const room: Room = await this.roomsService.findOne(savedBooking.roomId);
-        await this.bookingConfirmationEmailService.sendRoomBookingConfirmationEmail(savedBooking, room);
+        this.bookingConfirmationEmailService.sendRoomBookingConfirmationEmail(savedBooking, room);
         return savedBooking;
     }
 
@@ -79,6 +79,24 @@ export class RoomBookingsService {
                     checkOutDateTime: { $lte: DateUtils.getEndOfDay(checkOutDateTime) }
                 }
             ]
+        });
+    }
+
+    public async findRoomBookingsByUser(userId: number): Promise<RoomBookingInfo[]> {
+        const startDate: Date = DateUtils.getStartOfDay(DateUtils.getPastDate(new Date(), 3, 'months'));
+        const endDate: Date = DateUtils.getEndOfDay(DateUtils.getFuturDate(new Date(), 6, 'months').toISOString());
+        const dateTimeInterval: { checkInDateTime: { $gte: Date }, checkOutDateTime: { $lte: Date } } = {
+            checkInDateTime: { $gte: startDate },
+            checkOutDateTime: { $lte: endDate }
+        };
+        const rooms: Room[] = await this.roomsService.findAll();
+        const bookings: RoomBooking[] = await this.roomBookingModel.find({ 'user.id': userId, $and: [dateTimeInterval] });
+        return bookings.map((booking: RoomBooking) => {
+            const roomBookingInfo: RoomBookingInfo = {
+                bookingInfo: booking,
+                roomInfo: rooms.find((room: Room) => new mongoose.Types.ObjectId(room._id).toString() === booking.roomId)
+            };
+            return roomBookingInfo;
         });
     }
 }

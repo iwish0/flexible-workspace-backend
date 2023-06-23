@@ -17,7 +17,7 @@ export class Room {
   @Prop()
   public location: string;
 
-  @Prop({ default: 'Pas de description de disponible' })
+  @Prop({ default: 'Pas de description disponible' })
   public description: string;
 
   @Prop()

@@ -1,6 +1,7 @@
 import { RoomOfficeLayoutSVGData } from 'src/shared/models/room-office-layout.model';
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { SearchCriteria } from 'src/shared/models/booking-state.model';
+import { RoomBookingInfo } from 'src/shared/models/room-booking.model';
 import { RoomBooking } from 'src/shared/schemas/room-booking.schema';
 import { RoomBookingsService } from './room-bookings.service';
 
@@ -12,6 +13,11 @@ export class RoomBookingsController {
     @Get()
     public findAll(): Promise<RoomBooking[]> {
         return this.roomBookingsService.findAll();
+    }
+
+    @Get(':userId')
+    public findAllByUser(@Param('userId') userId: string): Promise<RoomBookingInfo[]> {
+        return this.roomBookingsService.findRoomBookingsByUser(+userId);
     }
 
     @Post()

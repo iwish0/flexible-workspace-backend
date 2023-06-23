@@ -82,12 +82,5 @@ export const ROOM_SVG_ATTRIBUTS: RoomSvgRectAttribut[] = [
         width: '75',
         x: '191',
         y: '134'
-    },
-    {
-        id: 'R6',
-        height: '69',
-        width: '75',
-        x: '331',
-        y: '135'
     }
 ];

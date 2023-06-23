@@ -30,7 +30,6 @@ export class DeskBookingsService {
         const deskBooking: DeskBooking = await this.deskBookingModel.findById(id);
         if (!deskBooking) throw new NotFoundException();
         return deskBooking;
-
     }
 
     public async create(booking: DeskBooking): Promise<DeskBooking> {
@@ -40,7 +39,7 @@ export class DeskBookingsService {
         const deskBookingToSave: DeskBooking = { ...booking, checkInDateTime: checkInDateTimeFormated, checkOutDateTime: checkOutDateTimeFormated };
         const savedBooking: DeskBooking = await new this.deskBookingModel(deskBookingToSave).save();
         const desk: Desk = await this.desksService.findOne(savedBooking.deskId);
-        await this.bookingConfirmationEmailService.sendDeskBookingConfirmationEmail(booking, desk);
+        this.bookingConfirmationEmailService.sendDeskBookingConfirmationEmail(booking, desk);
         return savedBooking;
     }
 
@@ -54,7 +53,7 @@ export class DeskBookingsService {
         const dateTimeInterval: { checkInDateTime: { $gte: Date }, checkOutDateTime: { $lte: Date } } = {
             checkInDateTime: { $gte: startDate },
             checkOutDateTime: { $lte: endDate }
-        }
+        };
         const desks: Desk[] = await this.desksService.findAll();
         const bookings: DeskBooking[] = await this.deskBookingModel.find({ 'user.id': userId, $and: [dateTimeInterval] });
         return bookings.map((booking: DeskBooking) => {
