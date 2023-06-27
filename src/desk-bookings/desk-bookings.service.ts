@@ -6,8 +6,8 @@ import { BadRequestException, Injectable, NotFoundException } from '@nestjs/comm
 import { PARAMETRE_INVALIDE } from 'src/shared/constants/error-label.constant';
 import { OfficeLayoutService } from 'src/office-layout/office-layout.service';
 import { SearchCriteria } from 'src/shared/models/booking-state.model';
+import { DesksService } from '../shared/services/desk/desks.service';
 import { DateUtils } from 'src/shared/utils/date.utils';
-import { DesksService } from 'src/desks/desks.service';
 import { Desk } from 'src/shared/schemas/desk.schema';
 import { InjectModel } from "@nestjs/mongoose";
 import mongoose, { Model } from 'mongoose';
