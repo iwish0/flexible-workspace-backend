@@ -1,10 +1,9 @@
 import { DeskBooking, DeskBookingSchema } from 'src/shared/schemas/desk-booking.schema';
+import { DesksServiceModule } from '../shared/services/desk/desks-service.module';
 import { OfficeLayoutService } from '../office-layout/office-layout.service';
 import { DeskBookingsController } from './desk-bookings.controller';
-import { Desk, DeskSchema } from 'src/shared/schemas/desk.schema';
 import { DeskBookingsService } from './desk-bookings.service';
 import { SharedModule } from '../shared/shared.module';
-import { DesksService } from '../desks/desks.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Module } from '@nestjs/common';
 
@@ -12,14 +11,11 @@ import { Module } from '@nestjs/common';
   controllers: [DeskBookingsController],
   imports: [
     SharedModule,
-    MongooseModule.forFeature([
-      { name: DeskBooking.name, schema: DeskBookingSchema },
-      { name: Desk.name, schema: DeskSchema }
-    ])],
+    DesksServiceModule,
+    MongooseModule.forFeature([{ name: DeskBooking.name, schema: DeskBookingSchema }])],
   providers: [
     DeskBookingsService,
-    OfficeLayoutService,
-    DesksService
+    OfficeLayoutService
   ]
 })
 export class DeskBookingsModule { }

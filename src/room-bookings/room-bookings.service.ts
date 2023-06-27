@@ -6,9 +6,9 @@ import { RoomOfficeLayoutSVGData } from 'src/shared/models/room-office-layout.mo
 import { PARAMETRE_INVALIDE } from 'src/shared/constants/error-label.constant';
 import { OfficeLayoutService } from 'src/office-layout/office-layout.service';
 import { SearchCriteria } from 'src/shared/models/booking-state.model';
+import { RoomsService } from '../shared/services/room/rooms.service';
 import { DateUtils } from 'src/shared/utils/date.utils';
 import { Room } from 'src/shared/schemas/room.schema';
-import { RoomsService } from '../rooms/rooms.service';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 

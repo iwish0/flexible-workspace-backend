@@ -1,12 +1,9 @@
-import { Desk, DeskSchema } from 'src/shared/schemas/desk.schema';
+import { DesksServiceModule } from '../shared/services/desk/desks-service.module';
 import { DesksController } from './desks.controller';
-import { MongooseModule } from '@nestjs/mongoose';
-import { DesksService } from './desks.service';
 import { Module } from '@nestjs/common';
 
 @Module({
   controllers: [DesksController],
-  imports: [MongooseModule.forFeature([{ name: Desk.name, schema: DeskSchema }])],
-  providers: [DesksService]
+  imports: [DesksServiceModule]
 })
 export class DesksModule { }

@@ -1,6 +1,6 @@
-import { Controller, Get, Param, Post, Body, NotFoundException, HttpStatus } from '@nestjs/common';
+import { RoomsService } from '../shared/services/room/rooms.service';
+import { Controller, Get, Param, Post, Body } from '@nestjs/common';
 import { Room } from 'src/shared/schemas/room.schema';
-import { RoomsService } from './rooms.service';
 
 @Controller('rooms')
 export class RoomsController {

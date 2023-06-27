@@ -1,5 +1,5 @@
-import { DataBaseEnvVariable } from './shared/models/config/env-variable-config.model';
 import { AllExceptionsFilter } from './shared/services/error/all-exceptions-filter.service';
+import { DataBaseEnvVariable } from './shared/models/config/env-variable-config.model';
 import { RoomBookingsModule } from './room-bookings/room-bookings.module';
 import { DeskBookingsModule } from './desk-bookings/desk-bookings.module';
 import { OfficeLayoutModule } from './office-layout/office-layout.module';
