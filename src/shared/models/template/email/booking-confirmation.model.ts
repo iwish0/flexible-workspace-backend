@@ -1,6 +1,9 @@
-export type BookingConfirmation = {
+export type BookingConfirmationEmailTemplateData = {
+    title: string;
+    bookingObjectName: string;
+    location?: string;
     checkInDate: string;
     checkOutDate: string;
-    deskName: string;
-    location?: string;
+    checkInTime?: string;
+    checkOutTime?: string;
 }

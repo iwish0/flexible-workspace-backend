@@ -27,9 +27,10 @@ import { Module } from '@nestjs/common';
         dbName: config.get<DataBaseEnvVariable>(DATABASE).dbName
       })
     }),
-    DeskBookingsModule,
-    RoomsModule,
     DesksModule,
+    RoomsModule,
+    DeskBookingsModule,
+    RoomBookingsModule,
     OfficeLayoutModule
   ],
   controllers: [AppController],

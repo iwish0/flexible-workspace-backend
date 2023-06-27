@@ -1,10 +1,13 @@
-import { BookingConfirmation } from '../../models/template/email/booking-confirmation.model';
-import { DeskBookingConfirmationEmailConstant } from 'src/shared/constants/email.constant';
+import { bookingConfirmationEmailTemplatePath, deskBookingConfirmationEmailTitle, roomkBookingConfirmationEmailTitle } from 'src/shared/constants/email.constant';
+import { BookingConfirmationEmailTemplateData } from '../../models/template/email/booking-confirmation.model';
 import { SmtpEnvVariable } from 'src/shared/models/config/env-variable-config.model';
+import { RoomBooking } from 'src/shared/schemas/room-booking.schema';
 import { DeskBooking } from '../../schemas/desk-booking.schema';
 import { SMTP } from 'src/shared/constants/config.constant';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { Desk } from 'src/shared/schemas/desk.schema';
+import { Room } from 'src/shared/schemas/room.schema';
+import { User } from 'src/shared/models/user.model';
 import { DateUtils } from '../../utils/date.utils';
 import { ConfigService } from '@nestjs/config';
 import { EmailService } from './email.service';
@@ -22,25 +25,48 @@ export class BookingConfirmationEmailService {
         private readonly config: ConfigService
     ) { }
 
-    public async sendDeskBookingConfirmationEmail(
+    public sendDeskBookingConfirmationEmail(
         booking: DeskBooking,
         desk: Desk
     ): Promise<SMTPTransport.SentMessageInfo> {
         const { checkInDateTime, checkOutDateTime, user } = booking;
-        const templateData: BookingConfirmation = {
+        const templateData: BookingConfirmationEmailTemplateData = {
+            title: deskBookingConfirmationEmailTitle,
             checkInDate: DateUtils.dateToString(checkInDateTime),
             checkOutDate: DateUtils.dateToString(checkOutDateTime),
-            deskName: desk.name
+            bookingObjectName: desk.name
         };
-        const { subject, templatePath } = DeskBookingConfirmationEmailConstant;
+        return this.sendBookingConfirmationEmail(user, templateData);
+    }
+
+    public sendRoomBookingConfirmationEmail(
+        booking: RoomBooking,
+        room: Room
+    ): Promise<SMTPTransport.SentMessageInfo> {
+        const { checkInDateTime, checkOutDateTime, user } = booking;
+        const templateData: BookingConfirmationEmailTemplateData = {
+            title: roomkBookingConfirmationEmailTitle,
+            checkInDate: DateUtils.dateToString(checkInDateTime),
+            checkOutDate: DateUtils.dateToString(checkOutDateTime),
+            checkInTime: DateUtils.getHourAndMinutFromDate(checkInDateTime),
+            checkOutTime: DateUtils.getHourAndMinutFromDate(checkOutDateTime),
+            bookingObjectName: room.name
+        };
+        return this.sendBookingConfirmationEmail(user, templateData);
+    }
+
+    public async sendBookingConfirmationEmail(
+        user: User,
+        templateData: BookingConfirmationEmailTemplateData
+    ): Promise<SMTPTransport.SentMessageInfo> {
         const srcDirname: string = __dirname.replace('dist', 'src');
-        const emailTemplateSource: string = await readFile(join(srcDirname, templatePath), 'utf-8');
+        const emailTemplateSource: string = await readFile(join(srcDirname, bookingConfirmationEmailTemplatePath), 'utf-8');
         const template = compile(emailTemplateSource);
         const htmlToSend = template(templateData);
         let mailOptions: Mail.Options = {
             from: this.config.get<SmtpEnvVariable>(SMTP).emailSenderAdress,
             to: user.email,
-            subject,
+            subject: templateData.title,
             html: htmlToSend
         };
         return this.emailService.sendEmail(mailOptions);
