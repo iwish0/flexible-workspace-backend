@@ -47,7 +47,7 @@ export class DeskBookingsService {
         return this.deskBookingModel.deleteOne({ '_id': bookingId });
     }
 
-    public async findDeskBookingHistoryByUser(userId: number): Promise<DeskBookingInfo[]> {
+    public async findDeskBookingHistoryByUser(userId: string): Promise<DeskBookingInfo[]> {
         const startDate: Date = DateUtils.getStartOfDay(DateUtils.getPastDate(new Date(), 3, 'months'));
         const endDate: Date = DateUtils.getEndOfDay(DateUtils.getFuturDate(new Date(), 6, 'months').toISOString());
         const dateTimeInterval: { checkInDateTime: { $gte: Date }, checkOutDateTime: { $lte: Date } } = {

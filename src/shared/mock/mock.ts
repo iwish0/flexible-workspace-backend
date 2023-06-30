@@ -3,7 +3,7 @@ import { DeskBooking } from '../schemas/desk-booking.schema';
 const mockBooking: DeskBooking = {
     user: {
         email: 'test@gmail.com',
-        id: 1,
+        id: "1a82-454vc",
         name: 'John'
     },
     checkInDateTime: new Date(2023, 4, 30, 8),
