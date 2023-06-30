@@ -82,7 +82,7 @@ export class RoomBookingsService {
         });
     }
 
-    public async findRoomBookingsByUser(userId: number): Promise<RoomBookingInfo[]> {
+    public async findRoomBookingsByUser(userId: string): Promise<RoomBookingInfo[]> {
         const startDate: Date = DateUtils.getStartOfDay(DateUtils.getPastDate(new Date(), 3, 'months'));
         const endDate: Date = DateUtils.getEndOfDay(DateUtils.getFuturDate(new Date(), 6, 'months').toISOString());
         const dateTimeInterval: { checkInDateTime: { $gte: Date }, checkOutDateTime: { $lte: Date } } = {

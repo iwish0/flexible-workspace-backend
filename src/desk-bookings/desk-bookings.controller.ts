@@ -17,7 +17,7 @@ export class DeskBookingsController {
 
     @Get(':userId')
     public findAllByUser(@Param('userId') userId: string): Promise<DeskBookingInfo[]> {
-        return this.deskBookingsService.findDeskBookingHistoryByUser(+userId);
+        return this.deskBookingsService.findDeskBookingHistoryByUser(userId);
     }
 
     @Post('state')

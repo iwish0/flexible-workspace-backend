@@ -17,7 +17,7 @@ export class RoomBookingsController {
 
     @Get(':userId')
     public findAllByUser(@Param('userId') userId: string): Promise<RoomBookingInfo[]> {
-        return this.roomBookingsService.findRoomBookingsByUser(+userId);
+        return this.roomBookingsService.findRoomBookingsByUser(userId);
     }
 
     @Post()
