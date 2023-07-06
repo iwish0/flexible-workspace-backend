@@ -6,12 +6,13 @@ import { OfficeLayoutModule } from './office-layout/office-layout.module';
 import { DATABASE } from './shared/constants/config.constant';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from './shared/config/configuration';
+import { AuthGuard } from './shared/guards/auth.guard';
+import { APP_FILTER, APP_GUARD } from '@nestjs/core';
 import { DesksModule } from './desks/desks.module';
 import { RoomsModule } from './rooms/rooms.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { APP_FILTER } from '@nestjs/core';
 import { Module } from '@nestjs/common';
 
 @Module({
@@ -39,6 +40,10 @@ import { Module } from '@nestjs/common';
     {
       provide: APP_FILTER,
       useClass: AllExceptionsFilter
+    },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard
     }
   ]
 })
