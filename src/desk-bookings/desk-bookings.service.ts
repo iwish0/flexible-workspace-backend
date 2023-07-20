@@ -67,14 +67,35 @@ export class DeskBookingsService {
 
     public findDeskBookingsByCriteria(searchCriteria: SearchCriteria): Promise<DeskBooking[]> {
         const { checkInDateTime, checkOutDateTime } = searchCriteria;
-        return this.deskBookingModel.find({
+        const query = {};
+        const datePipeArray = [];
+        // datePipeArray check overlapped date
+        datePipeArray.push({
             $and: [
-                {
-                    checkInDateTime: { $gte: DateUtils.getStartOfDay(checkInDateTime) },
-                    checkOutDateTime: { $lte: DateUtils.getEndOfDay(checkOutDateTime) }
-                }
+                { checkInDateTime: { $gte: DateUtils.getStartOfDay(checkInDateTime) } },
+                { checkOutDateTime: { $lte: DateUtils.getEndOfDay(checkOutDateTime) } }
             ]
         });
+        datePipeArray.push({
+            $and: [
+                { checkOutDateTime: { $gte: DateUtils.getStartOfDay(checkInDateTime) } },
+                { checkOutDateTime: { $lte: DateUtils.getEndOfDay(checkOutDateTime) } }
+            ]
+        });
+        datePipeArray.push({
+            $and: [
+                { checkInDateTime: { $gte: DateUtils.getStartOfDay(checkInDateTime) } },
+                { checkInDateTime: { $lte: DateUtils.getEndOfDay(checkOutDateTime) } }
+            ]
+        });
+        datePipeArray.push({
+            $and: [
+                { checkInDateTime: { $lte: DateUtils.getStartOfDay(checkInDateTime) } },
+                { checkOutDateTime: { $gte: DateUtils.getEndOfDay(checkOutDateTime) } }
+            ]
+        });
+        query['$or'] = datePipeArray;
+        return this.deskBookingModel.find(query);
     }
 
     public async findDesksBookingState(searchCriteria: SearchCriteria): Promise<DeskBookingState[]> {
