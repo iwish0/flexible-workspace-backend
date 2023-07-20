@@ -5,8 +5,8 @@
     <title>Confirmation de réservation</title>
     <style>
         body {
-            background-color: #18b3b3;
-            padding-bottom: 2rem;
+            background-color: #F6F6F6;
+            padding: 2rem 0 4rem 0;
         }
 
         #titleBloc {
@@ -15,15 +15,15 @@
         }
 
         h1 {
-            color: #dd1273;
+            color: #18b3b3;
             font-size: 1.1rem;
             padding: 0.7rem;
-            width: 70%;
+            width: 60%;
             margin: auto;
             text-align: center;
             border-radius: 0.5em;
             background-color: white;
-            margin: 1.2rem 0 1.2rem 0;
+            margin: 1.6rem 0 1.6rem 0;
         }
 
         #mainContent>div.flex {
@@ -41,20 +41,30 @@
             font-weight: bold;
             border-radius: 0.5rem;
         }
+
+        #imgBlock {
+            display: flex;
+            justify-content: center;
+        }
     </style>
 </head>
 
 <body>
+    <div id="imgBlock">
+        <img src="cid:proxiadLogo" alt="logo proxiad" width="160" />
+    </div>
     <div id="titleBloc">
         <h1>{{title}}</h1>
     </div>
     <div id="mainContent">
         <div class="flex"><span>Emplacement</span><span>{{bookingObjectName}}</span></div>
-        {{#if location}} <div><span>Localisation</span><span>{{location}}</span></div>{{/if}}
+        {{#if location}} <div class="flex"><span>Localisation</span><span>{{location}}</span></div>{{/if}}
         <div class="flex"><span>Date de début</span><span>{{checkInDate}}</span></div>
-        {{#if checkInTime}}<div class="flex"><span>Heure de début</span><span>{{checkInTime}}</span></div>{{/if}}
+        {{#if checkInTime}}<div class="flex"><span>Heure de début</span><span>{{checkInTime}}</span></div>
+        {{/if}}
         <div class="flex"><span>Date de fin</span><span>{{checkOutDate}}</span></div>
-        {{#if checkOutTime}} <div class="flex"><span>Heure de fin</span><span>{{checkOutTime}}</span></div>{{/if}}
+        {{#if checkOutTime}} <div class="flex"><span>Heure de fin</span><span>{{checkOutTime}}</span></div>
+        {{/if}}
     </div>
 </body>
 

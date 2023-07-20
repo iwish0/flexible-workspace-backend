@@ -67,6 +67,11 @@ export class BookingConfirmationEmailService {
             from: this.config.get<SmtpEnvVariable>(SMTP).emailSenderAdress,
             to: user.email,
             subject: templateData.title,
+            attachments: [{
+                filename: 'proxiad-logo.png',
+                path: join(__dirname, '../../../assets/proxiad-logo.png'),
+                cid: 'proxiadLogo'
+            }],
             html: htmlToSend
         };
         return this.emailService.sendEmail(mailOptions);
