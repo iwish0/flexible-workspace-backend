@@ -7,6 +7,7 @@ import { PARAMETRE_INVALIDE } from 'src/shared/constants/error-label.constant';
 import { OfficeLayoutService } from 'src/office-layout/office-layout.service';
 import { SearchCriteria } from 'src/shared/models/booking-state.model';
 import { RoomsService } from '../shared/services/room/rooms.service';
+import { DBQueryUtils } from 'src/shared/utils/db-query.utils';
 import { DateUtils } from 'src/shared/utils/date.utils';
 import { Room } from 'src/shared/schemas/room.schema';
 import { InjectModel } from '@nestjs/mongoose';
@@ -71,15 +72,13 @@ export class RoomBookingsService {
     }
 
     public findRoomBookingsByCriteria(searchCriteria: SearchCriteria): Promise<RoomBooking[]> {
-        const { checkInDateTime, checkOutDateTime } = searchCriteria;
-        return this.roomBookingModel.find({
-            $and: [
-                {
-                    checkInDateTime: { $gte: DateUtils.getStartOfDay(checkInDateTime) },
-                    checkOutDateTime: { $lte: DateUtils.getEndOfDay(checkOutDateTime) }
-                }
-            ]
-        });
+        const checkInDateTimeFormated: Date = DateUtils.getDateWithoutSecondAndMiilisecond(searchCriteria.checkInDateTime);
+        const checkOutDateTimeFormated: Date = DateUtils.getDateWithoutSecondAndMiilisecond(searchCriteria.checkOutDateTime);
+        const query: Object = DBQueryUtils.getSearchBookingQuery(
+            DateUtils.getFuturDate(checkInDateTimeFormated, 1, 'minute'),
+            DateUtils.getPastDate(checkOutDateTimeFormated, 1, 'minute')
+        );
+        return this.roomBookingModel.find(query);
     }
 
     public async findRoomBookingsByUser(userId: string): Promise<RoomBookingInfo[]> {

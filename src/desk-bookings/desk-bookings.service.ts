@@ -7,6 +7,7 @@ import { PARAMETRE_INVALIDE } from 'src/shared/constants/error-label.constant';
 import { OfficeLayoutService } from 'src/office-layout/office-layout.service';
 import { SearchCriteria } from 'src/shared/models/booking-state.model';
 import { DesksService } from '../shared/services/desk/desks.service';
+import { DBQueryUtils } from 'src/shared/utils/db-query.utils';
 import { DateUtils } from 'src/shared/utils/date.utils';
 import { Desk } from 'src/shared/schemas/desk.schema';
 import { InjectModel } from "@nestjs/mongoose";
@@ -34,8 +35,8 @@ export class DeskBookingsService {
 
     public async create(booking: DeskBooking): Promise<DeskBooking> {
         const { checkInDateTime, checkOutDateTime } = booking;
-        const checkInDateTimeFormated = DateUtils.getDateWithoutSecondAndMiilisecond(checkInDateTime);
-        const checkOutDateTimeFormated = DateUtils.getDateWithoutSecondAndMiilisecond(checkOutDateTime);
+        const checkInDateTimeFormated: Date = DateUtils.getDateWithoutSecondAndMiilisecond(checkInDateTime);
+        const checkOutDateTimeFormated: Date = DateUtils.getDateWithoutSecondAndMiilisecond(checkOutDateTime);
         const deskBookingToSave: DeskBooking = { ...booking, checkInDateTime: checkInDateTimeFormated, checkOutDateTime: checkOutDateTimeFormated };
         const savedBooking: DeskBooking = await new this.deskBookingModel(deskBookingToSave).save();
         const desk: Desk = await this.desksService.findOne(savedBooking.deskId);
@@ -66,35 +67,9 @@ export class DeskBookingsService {
     }
 
     public findDeskBookingsByCriteria(searchCriteria: SearchCriteria): Promise<DeskBooking[]> {
-        const { checkInDateTime, checkOutDateTime } = searchCriteria;
-        const query = {};
-        const datePipeArray = [];
-        // datePipeArray check overlapped date
-        datePipeArray.push({
-            $and: [
-                { checkInDateTime: { $gte: DateUtils.getStartOfDay(checkInDateTime) } },
-                { checkOutDateTime: { $lte: DateUtils.getEndOfDay(checkOutDateTime) } }
-            ]
-        });
-        datePipeArray.push({
-            $and: [
-                { checkOutDateTime: { $gte: DateUtils.getStartOfDay(checkInDateTime) } },
-                { checkOutDateTime: { $lte: DateUtils.getEndOfDay(checkOutDateTime) } }
-            ]
-        });
-        datePipeArray.push({
-            $and: [
-                { checkInDateTime: { $gte: DateUtils.getStartOfDay(checkInDateTime) } },
-                { checkInDateTime: { $lte: DateUtils.getEndOfDay(checkOutDateTime) } }
-            ]
-        });
-        datePipeArray.push({
-            $and: [
-                { checkInDateTime: { $lte: DateUtils.getStartOfDay(checkInDateTime) } },
-                { checkOutDateTime: { $gte: DateUtils.getEndOfDay(checkOutDateTime) } }
-            ]
-        });
-        query['$or'] = datePipeArray;
+        const checkInDateTimeFormated: Date = DateUtils.getStartOfDay(searchCriteria.checkInDateTime);
+        const checkOutDateTimeFormated: Date = DateUtils.getEndOfDay(searchCriteria.checkOutDateTime);
+        const query: Object = DBQueryUtils.getSearchBookingQuery(checkInDateTimeFormated, checkOutDateTimeFormated);
         return this.deskBookingModel.find(query);
     }
 
