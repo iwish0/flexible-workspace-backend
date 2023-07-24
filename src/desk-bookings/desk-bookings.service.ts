@@ -3,6 +3,7 @@ import { DeskBooking, DeskBookingDocument } from 'src/shared/schemas/desk-bookin
 import { DeskBookingInfo, DeskBookingState } from 'src/shared/models/desk-booking.model';
 import { DeskOfficeLayoutSVGData } from 'src/shared/models/desk-office-layout.model';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { CalendarService } from '../shared/services/calendar/calendar.service';
 import { PARAMETRE_INVALIDE } from 'src/shared/constants/error-label.constant';
 import { OfficeLayoutService } from 'src/office-layout/office-layout.service';
 import { SearchCriteria } from 'src/shared/models/booking-state.model';
@@ -18,6 +19,7 @@ export class DeskBookingsService {
 
     constructor(
         private readonly desksService: DesksService,
+        private readonly calendarService: CalendarService,
         private readonly officeLayoutService: OfficeLayoutService,
         private readonly bookingConfirmationEmailService: BookingConfirmationEmailService,
         @InjectModel(DeskBooking.name) private readonly deskBookingModel: Model<DeskBookingDocument>
@@ -41,6 +43,7 @@ export class DeskBookingsService {
         const savedBooking: DeskBooking = await new this.deskBookingModel(deskBookingToSave).save();
         const desk: Desk = await this.desksService.findOne(savedBooking.deskId);
         this.bookingConfirmationEmailService.sendDeskBookingConfirmationEmail(booking, desk);
+        this.calendarService.scheduleMeeting(booking.user.id);
         return savedBooking;
     }
 

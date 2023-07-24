@@ -1,3 +1,4 @@
+import { CalendarServiceModule } from '../shared/services/calendar/calendar-service.module';
 import { DeskBooking, DeskBookingSchema } from 'src/shared/schemas/desk-booking.schema';
 import { DesksServiceModule } from '../shared/services/desk/desks-service.module';
 import { OfficeLayoutService } from '../office-layout/office-layout.service';
@@ -12,6 +13,7 @@ import { Module } from '@nestjs/common';
   imports: [
     SharedModule,
     DesksServiceModule,
+    CalendarServiceModule,
     MongooseModule.forFeature([{ name: DeskBooking.name, schema: DeskBookingSchema }])],
   providers: [
     DeskBookingsService,
