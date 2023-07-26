@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Body, Param, Delete, HttpException, HttpStatus } from '@nestjs/common';
 import { DeskBookingInfo, DeskBookingState } from 'src/shared/models/desk-booking.model';
 import { DeskOfficeLayoutSVGData } from 'src/shared/models/desk-office-layout.model';
+import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
 import { SearchCriteria } from 'src/shared/models/booking-state.model';
 import { DeskBooking } from 'src/shared/schemas/desk-booking.schema';
 import { DeskBookingsService } from './desk-bookings.service';

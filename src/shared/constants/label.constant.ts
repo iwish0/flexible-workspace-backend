@@ -1,0 +1,2 @@
+export const deskBookingCalendarSubject = (deskName: string): string => `Réservation de la place ${deskName}`;
+export const roomBookingCalendarSubject = (roomName: string): string => `Réservation de la salle ${roomName}`;

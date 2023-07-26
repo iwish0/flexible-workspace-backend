@@ -12,5 +12,10 @@ export default (): EnvVariableConfig => ({
         user: process.env.EMAIL_AUTH_USER,
         pass: process.env.EMAIL_AUTH_PWD,
         emailSenderAdress: process.env.EMAIL_SENDER_ADRESS
+    },
+    clientCredentials: {
+        tenantId: process.env.TENANT_ID,
+        clientId: process.env.CLIENT_ID,
+        clientSecret: process.env.CLIENT_SECRET
     }
 });

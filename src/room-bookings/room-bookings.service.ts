@@ -3,8 +3,11 @@ import { RoomBooking, RoomBookingDocument } from 'src/shared/schemas/room-bookin
 import { RoomBookingInfo, RoomBookingState } from 'src/shared/models/room-booking.model';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { RoomOfficeLayoutSVGData } from 'src/shared/models/room-office-layout.model';
+import { roomBookingCalendarSubject } from 'src/shared/constants/label.constant';
+import { CalendarService } from 'src/shared/services/calendar/calendar.service';
 import { PARAMETRE_INVALIDE } from 'src/shared/constants/error-label.constant';
 import { OfficeLayoutService } from 'src/office-layout/office-layout.service';
+import { EventScheduleDetail } from 'src/shared/models/event-schedule.model';
 import { SearchCriteria } from 'src/shared/models/booking-state.model';
 import { RoomsService } from '../shared/services/room/rooms.service';
 import { DBQueryUtils } from 'src/shared/utils/db-query.utils';
@@ -18,6 +21,7 @@ export class RoomBookingsService {
 
     constructor(
         private readonly roomsService: RoomsService,
+        private readonly calendarService: CalendarService,
         private readonly officeLayoutService: OfficeLayoutService,
         private readonly bookingConfirmationEmailService: BookingConfirmationEmailService,
         @InjectModel(RoomBooking.name) private readonly roomBookingModel: Model<RoomBookingDocument>
@@ -34,13 +38,20 @@ export class RoomBookingsService {
     }
 
     public async create(roomBooking: RoomBooking): Promise<RoomBooking> {
-        const { checkInDateTime, checkOutDateTime } = roomBooking;
+        const { checkInDateTime, checkOutDateTime, user } = roomBooking;
         const checkInDateTimeFormated = DateUtils.getDateWithoutSecondAndMiilisecond(checkInDateTime);
         const checkOutDateTimeFormated = DateUtils.getDateWithoutSecondAndMiilisecond(checkOutDateTime);
         const bookingToSave: RoomBooking = { ...roomBooking, checkInDateTime: checkInDateTimeFormated, checkOutDateTime: checkOutDateTimeFormated };
         const savedBooking: RoomBooking = await new this.roomBookingModel(bookingToSave).save();
         const room: Room = await this.roomsService.findOne(savedBooking.roomId);
         this.bookingConfirmationEmailService.sendRoomBookingConfirmationEmail(savedBooking, room);
+        const eventScheduleDetail: EventScheduleDetail = {
+            userId: user.id,
+            subject: roomBookingCalendarSubject(room.name),
+            startDateTime: checkInDateTimeFormated.toISOString(),
+            endDateTime: checkOutDateTimeFormated.toISOString()
+        };
+        this.calendarService.scheduleEvent(eventScheduleDetail);
         return savedBooking;
     }
 
