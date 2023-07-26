@@ -2,6 +2,7 @@ export type EnvVariableConfig = {
     port: number;
     database: DataBaseEnvVariable;
     smtp: SmtpEnvVariable;
+    clientCredentials: clientCredentialsEnvVariable;
 }
 
 export type DataBaseEnvVariable = {
@@ -15,4 +16,10 @@ export type SmtpEnvVariable = {
     host: string;
     user: string;
     pass: string;
+}
+
+export type clientCredentialsEnvVariable = {
+    tenantId: string;
+    clientId: string;
+    clientSecret: string;
 }
