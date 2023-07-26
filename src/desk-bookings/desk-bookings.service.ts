@@ -3,9 +3,11 @@ import { DeskBooking, DeskBookingDocument } from 'src/shared/schemas/desk-bookin
 import { DeskBookingInfo, DeskBookingState } from 'src/shared/models/desk-booking.model';
 import { DeskOfficeLayoutSVGData } from 'src/shared/models/desk-office-layout.model';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { deskBookingCalendarSubject } from 'src/shared/constants/label.constant';
 import { CalendarService } from '../shared/services/calendar/calendar.service';
 import { PARAMETRE_INVALIDE } from 'src/shared/constants/error-label.constant';
 import { OfficeLayoutService } from 'src/office-layout/office-layout.service';
+import { EventScheduleDetail } from 'src/shared/models/event-schedule.model';
 import { SearchCriteria } from 'src/shared/models/booking-state.model';
 import { DesksService } from '../shared/services/desk/desks.service';
 import { DBQueryUtils } from 'src/shared/utils/db-query.utils';
@@ -43,7 +45,13 @@ export class DeskBookingsService {
         const savedBooking: DeskBooking = await new this.deskBookingModel(deskBookingToSave).save();
         const desk: Desk = await this.desksService.findOne(savedBooking.deskId);
         this.bookingConfirmationEmailService.sendDeskBookingConfirmationEmail(booking, desk);
-        this.calendarService.scheduleMeeting(booking.user.id);
+        const eventScheduleDetail: EventScheduleDetail = {
+            userId: booking.user.id,
+            subject: deskBookingCalendarSubject(desk.name),
+            startDateTime: DateUtils.getDateTimeForDeskBookingCalendar(checkInDateTimeFormated, 8),
+            endDateTime: DateUtils.getDateTimeForDeskBookingCalendar(checkOutDateTimeFormated, 18)
+        };
+        this.calendarService.scheduleEvent(eventScheduleDetail);
         return savedBooking;
     }
 

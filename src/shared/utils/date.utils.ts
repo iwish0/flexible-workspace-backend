@@ -76,4 +76,12 @@ export class DateUtils {
         }
         return `${date.getHours()}:${date.getMinutes()}`;
     }
+
+    public static getDateTimeForDeskBookingCalendar(date: Date, hours: number): string {
+        const newDate: Date = new Date(date);
+        newDate.setHours(hours);
+        newDate.setMinutes(0);
+        console.log('newDate.toISOString();', newDate.toISOString())
+        return newDate.toISOString();
+    }
 }

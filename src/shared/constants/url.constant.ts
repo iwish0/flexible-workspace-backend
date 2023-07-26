@@ -1,0 +1,1 @@
+export const msGraphUsersEventsURL = (userId: string) => `users/${userId}/events`;
